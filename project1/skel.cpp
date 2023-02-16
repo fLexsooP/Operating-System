@@ -59,6 +59,11 @@ void computeHash(const string &hashProgName)
 		perror("read");
 		exit(-1);
 	}
+	if(close(parentToChildPipe[READ_END]) < 0)
+	{
+		perror("close");
+		exit(-1);
+	}
 
 	/* Glue together a command line <PROGRAM NAME>.
 	 * For example, sha512sum fileName.
@@ -100,13 +105,7 @@ void computeHash(const string &hashProgName)
 		perror("write");
 		exit(-1);
 	}
-
 	if(close(childToParentPipe[WRITE_END]) < 0)
-	{
-		perror("close");
-		exit(-1);
-	}
-	if(close(parentToChildPipe[READ_END]) < 0)
 	{
 		perror("close");
 		exit(-1);
@@ -122,19 +121,17 @@ void parentFunc(const string &hashProgName)
 	/* I am the parent */
 
 	/** TODO: close the unused ends of two pipes. **/
-	/* Close the write end of the child-to-parent pipe */
 	if (close(childToParentPipe[WRITE_END]) < 0)
 	{
 		perror("close");
 		exit(-1);
 	}
-
-	/* Close the read end of the parent-to-child pipe */
 	if (close(parentToChildPipe[READ_END]) < 0)
 	{
 		perror("close");
 		exit(-1);
 	}
+
 	/* The buffer to hold the string received from the child */
 	char hashValue[HASH_VALUE_LENGTH];
 
@@ -146,14 +143,11 @@ void parentFunc(const string &hashProgName)
 	 .
 	 .
 	 */
-	// TODO: FIX this
-	if (write(parentToChildPipe[WRITE_END], fileName.c_str(), MAX_FILE_NAME_LENGTH))
+	if (write(parentToChildPipe[WRITE_END], fileName.c_str(), MAX_FILE_NAME_LENGTH) < 0)
 	{
 		perror("write");
 		exit(-1);
 	}
-	sleep(2);
-	sleep(2);
 	if (close(parentToChildPipe[WRITE_END]) < 0)
 	{
 		perror("close");
@@ -200,14 +194,11 @@ int main(int argc, char **argv)
 	for (int hashAlgNum = 0; hashAlgNum < HASH_PROG_ARRAY_SIZE; ++hashAlgNum)
 	{
 		/** TODO: create two pipes **/
-		/* Create a parent-to-child pipe */
 		if (pipe(parentToChildPipe) < 0)
 		{
 			perror("pipe");
 			exit(-1);
 		}
-
-		/* Create a child-to-parent pipe */
 		if (pipe(childToParentPipe) < 0)
 		{
 			perror("pipe");
@@ -231,7 +222,6 @@ int main(int argc, char **argv)
 				perror("close");
 				exit(-1);
 			}
-
 			if (close(childToParentPipe[READ_END]) < 0)
 			{
 				perror("close");
