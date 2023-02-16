@@ -54,12 +54,12 @@ void computeHash(const string &hashProgName)
 	memset(fileNameRecv, (char)NULL, MAX_FILE_NAME_LENGTH);
 
 	/** TODO: Now, lets read a message from the parent **/
-	if(read(parentToChildPipe[READ_END], fileNameRecv, sizeof(fileNameRecv)) < 0)
+	if(read(parentToChildPipe[READ_END], fileNameRecv, MAX_FILE_NAME_LENGTH) < 0)
 	{
 		perror("read");
 		exit(-1);
 	}
-	
+
 	/* Glue together a command line <PROGRAM NAME>.
 	 * For example, sha512sum fileName.
 	 */
@@ -95,16 +95,12 @@ void computeHash(const string &hashProgName)
 	 .
 	 .
 	*/
-	if(write(childToParentPipe[WRITE_END], hashValue, sizeof(HASH_VALUE_LENGTH)) < 0)
+	if(write(childToParentPipe[WRITE_END], hashValue, HASH_VALUE_LENGTH) < 0)
 	{
 		perror("write");
 		exit(-1);
 	}
 
-
-	/* Close write end of the child-to-parent pipe; this will
-	 * cause the parent's read() function to unblock.
-	 */
 	if(close(childToParentPipe[WRITE_END]) < 0)
 	{
 		perror("close");
@@ -150,9 +146,17 @@ void parentFunc(const string &hashProgName)
 	 .
 	 .
 	 */
-	if (write(parentToChildPipe[WRITE_END], fileName.c_str(), sizeof(fileName)))
+	// TODO: FIX this
+	if (write(parentToChildPipe[WRITE_END], fileName.c_str(), MAX_FILE_NAME_LENGTH))
 	{
 		perror("write");
+		exit(-1);
+	}
+	sleep(2);
+	sleep(2);
+	if (close(parentToChildPipe[WRITE_END]) < 0)
+	{
+		perror("close");
 		exit(-1);
 	}
 	/* TODO: Read the string sent by the child
@@ -165,20 +169,6 @@ void parentFunc(const string &hashProgName)
 		perror("read");
 		exit(-1);
 	}
-
-	/* Close the writing end of the parent-to-child pipe; this will cause the child's
-	 * read() function to unblock.
-	 */
-	if (close(parentToChildPipe[WRITE_END]) < 0)
-	{
-		perror("close");
-		exit(-1);
-	}
-
-
-	/* Close the writing end of the parent-to-child pipe; this will cause the child's
-	 * read() function to unblock.
-	 */
 	if (close(childToParentPipe[READ_END]) < 0)
 	{
 		perror("close");
@@ -209,7 +199,6 @@ int main(int argc, char **argv)
 	/* Run a program for each type of hashing algorithm hash algorithm */
 	for (int hashAlgNum = 0; hashAlgNum < HASH_PROG_ARRAY_SIZE; ++hashAlgNum)
 	{
-
 		/** TODO: create two pipes **/
 		/* Create a parent-to-child pipe */
 		if (pipe(parentToChildPipe) < 0)
@@ -235,6 +224,7 @@ int main(int argc, char **argv)
 		else if (pid == 0)
 
 		{
+
 			/** TODO: close the unused ends of two pipes **/
 			if (close(parentToChildPipe[WRITE_END]) < 0)
 			{
