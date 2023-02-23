@@ -1,4 +1,4 @@
-
+#include <unistd.h>
 #include <pthread.h>
 #include <stdio.h>
 
@@ -20,7 +20,7 @@ int main() {
 	pthread_create(&tid_new_thread, NULL, thread_func, NULL);
 
 	printf("Thread id of created thread %lu\n", tid_new_thread);
-
+	sleep(30);
 	pthread_join(tid_new_thread, NULL);
 
 	printf("Original thread\n");

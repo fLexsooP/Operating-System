@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
@@ -7,6 +8,7 @@ void* print_message_function(void* ptr)
     char* message;
     message = (char*)ptr;
     printf("%s \n", message);
+    sleep(60);
     return NULL;
 }
 
