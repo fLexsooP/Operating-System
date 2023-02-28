@@ -31,6 +31,8 @@ void* print_alpha(void* arg) {
     pthread_exit(0);
 }
 
+
+
 void* print_numeric(void* arg) {
     char* message;
     message = (char*)arg;
