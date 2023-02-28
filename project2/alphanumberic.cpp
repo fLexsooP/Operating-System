@@ -10,22 +10,20 @@
 
 using namespace std;
 
-string phrase;
+string phrase = "";
+istringstream ss;
 bool locked;
 
 void* print_alpha(void* arg) {
     char* message;
     message = (char*)arg;
 
-    istringstream ss(phrase);
     string word;
 
     while(ss >> word) {
         if (word[0] < '0' || word[0] > '9') {
             printf("%s: ", message);
             cout << word << endl;
-        } else {
-            locked = false;
         }
     }
     pthread_exit(0);
@@ -37,15 +35,12 @@ void* print_numeric(void* arg) {
     char* message;
     message = (char*)arg;
 
-    istringstream ss(phrase);
     string word;
 
     while(ss >> word) {
         if (word[0] >= '0' && word[0] <= '9') {
             printf("%s: ", message);
             cout << word << endl;
-        } else {
-            locked = true;
         }
     }
     pthread_exit(0);
@@ -62,6 +57,7 @@ int main(int argc, char const *argv[])
 
 	/* Save the name of the file */
 	phrase = argv[1];
+    ss.str(phrase);
 
     pthread_t alpha, numeric;
     // char* alpha_message = const_cast<char*>(a_message.c_str());
