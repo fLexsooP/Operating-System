@@ -1,19 +1,17 @@
 
-#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
 #include <iostream>
 #include <string>
 #include <vector>
-#include <unistd.h>
 #include <ctype.h>
 #include <bits/stdc++.h>
 
 
 using namespace std;
 
-string sentense;
+string sentence;
 vector<string> words;
 int cur_index = 0;
 bool locked = true;
@@ -64,8 +62,8 @@ int main(int argc, char const *argv[])
 	}
 
 	/* Save the name of the file */
-	sentense = argv[1];
-    words = split_into_words(sentense);
+	sentence = argv[1];
+    words = split_into_words(sentence);
     
 
 
