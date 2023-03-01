@@ -13,7 +13,7 @@
 
 using namespace std;
 
-string phrase;
+string sentense;
 vector<string> words;
 int cur_index = 0;
 bool locked = true;
@@ -64,8 +64,8 @@ int main(int argc, char const *argv[])
 	}
 
 	/* Save the name of the file */
-	phrase = argv[1];
-    words = split_into_words(phrase);
+	sentense = argv[1];
+    words = split_into_words(sentense);
     
 
 
