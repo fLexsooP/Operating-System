@@ -14,7 +14,7 @@ using namespace std;
 string sentence;
 vector<string> words;
 int cur_index = 0;
-bool locked = true;
+bool flag;
 
 vector<string> split_into_words(string phrase) {
     stringstream ss(phrase);
@@ -31,7 +31,8 @@ void* print_alpha(void* arg) {
     message = (char*)arg;
 
     while (cur_index < words.size()) {
-        if (isalpha(words[cur_index][0])) {
+        flag = isalpha(words[cur_index][0]);
+        if (flag) {
             cout << message << ": " << words[cur_index] << endl;
             cur_index++;
         } 
@@ -44,7 +45,8 @@ void* print_numeric(void* arg) {
     message = (char*)arg;
 
     while (cur_index < words.size()) {
-        if (isdigit(words[cur_index][0])) {
+        flag = isalpha(words[cur_index][0]);
+        if (!flag) {
             cout << message << ": " << words[cur_index] << endl;
             cur_index++;
         }
@@ -65,9 +67,7 @@ int main(int argc, char const *argv[])
 	sentence = argv[1];
     words = split_into_words(sentence);
     
-
-
-
+    
     pthread_t alpha, numeric;
     char* alpha_message = const_cast<char*>("alpha");
     char* numeric_message = const_cast<char*>("numeric");
