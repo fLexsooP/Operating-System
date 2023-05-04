@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
     }
     cout << endl;
     /* Write a string to the mapped region */
-    /*	memcpy(data, "Hello world, this is a test\n", sizeof("Hello world, this is a test"));*/
+    memcpy(data, "Hello world, this is a test\n", sizeof("Hello world, this is a test"));
 
     /* Unmap the shared memory region */
     munmap(data, pagesize);
